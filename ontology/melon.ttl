@@ -1,0 +1,88 @@
+@prefix dc: <http://purl.org/dc/terms/> .
+@prefix mls: <http://www.w3.org/ns/mls#> .
+@prefix nif: <http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#> .
+@prefix oa: <http://www.w3.org/ns/oa#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix schema: <http://schema.org/> .
+@prefix vann: <http://purl.org/vocab/vann/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix itsrdf: <http://www.w3.org/2005/11/its/rdf#> .
+
+@prefix miao: <http://www.gsi.upm.es/ontologies/miao/ns#> .
+
+<http://www.gsi.upm.es/ontologies/miao/ns> a owl:Ontology ;
+   rdfs:label "MIAO Mental Illness Analysis Ontology"@en ;
+   owl:versionInfo "1.0.0"^^xsd:string ;
+   owl:versionIRI <http://www.gsi.upm.es/ontologies/miao/ns/1.0.0> ;
+   owl:imports <http://www.w3.org/2005/11/its/rdf#> ;
+   dc:title "MIAO Mental Illness Analysis Ontology"@en ;
+   dc:publisher <http://www.gsi.upm.es> ;
+   rdfs:comment "MIAO is an ontology designed for representing mental illness analysis and annotations."@en ;
+   dc:description "MIAO is an ontology for representing mental illnesses, their characteristics, and annotation of related phenomena."@en ;
+   vann:preferredNamespacePrefix "miao" ;
+   vann:preferredNamespaceUri "http://www.gsi.upm.es/ontologies/miao/ns#" .
+
+miao:AnalysedEntity a owl:Class ;
+   rdfs:subClassOf prov:Entity ;
+   rdfs:label "Analysed Entity"@en ;
+   rdfs:comment "Represents any entity that serves as the subject or source of mental illness analysis. This may include textual data (e.g., clinical notes, social media posts, questionnaires), or agents (e.g., patients, respondents, participants) whose mental health status is being assessed."@en .
+
+miao:MentalIllnessAnnotation a owl:Class ;
+   rdfs:subClassOf prov:Entity , oa:Annotation ;
+   rdfs:label "Mental Illness Annotation"@en ;
+   rdfs:comment "Represents an annotation indicating the presence, symptoms, or characteristics of a mental illness, extracted or inferred from analysed sources such as text, questionnaires, or other data."@en .
+
+miao:MentalIllnessAnalysis a owl:Class ;
+   rdfs:subClassOf prov:Activity ;
+   rdfs:label "Mental Illness Analysis"@en ;
+   rdfs:comment "Represents the activity of analyzing a resource (such as text, questionnaire responses, or other data) to detect, annotate, or infer mental illnesses or related characteristics."@en .
+
+
+miao:MentalIllnessModel a owl:Class ;
+   rdfs:subClassOf prov:Entity ;
+   rdfs:label "Mental Illness Model"@en ;
+   rdfs:comment "Represents a conceptual or computational model used to categorize, structure, or assess mental illnesses and related phenomena. This may include clinical classification systems (e.g., DSM-5, ICD-11), computational models for symptom grouping or severity grading, or custom frameworks defining both typologies and levels of mental health conditions."@en .
+
+miao:MentalIllnessCategory a owl:Class ;
+   rdfs:subClassOf prov:Entity ;
+   rdfs:label "Mental Illness Category"@en ;
+   rdfs:comment "Represents a category related to mental illnesses, which may refer either to (a) the type or class of mental illness (e.g., anxiety disorder, depressive disorder) as defined by a particular model or classification system, or (b) the severity or level of a specific condition (e.g., mild, moderate, severe), according to the criteria of the applied model."@en .
+
+miao:hasMentalIllnessCategory a owl:ObjectProperty ;
+   rdfs:subPropertyOf prov:hadMember ;
+   rdfs:label "has mental illness category"@en ;
+   rdfs:domain [
+       a owl:Class ;
+       owl:unionOf ( miao:MentalIllnessAnnotation miao:MentalIllnessModel )
+   ] ;
+   rdfs:range miao:MentalIllnessCategory ;
+   rdfs:comment "Specifies the category of the mental illness."@en .
+
+miao:hasMentalIllnessIntensity a owl:DatatypeProperty ;
+   rdfs:label "has mental illness intensity"@en ;
+   rdfs:comment "Value that quantifies the intensity or severity of the detected or annotated mental illness or symptom."@en ;
+   rdfs:domain miao:MentalIllnessAnnotation ;
+   rdfs:range xsd:float .
+
+miao:usedMentalIllnessModel a owl:ObjectProperty ;
+   rdfs:subPropertyOf prov:used ;
+   rdfs:label "used mental illness model"@en ;
+   rdfs:domain miao:MentalIllnessAnalysis ;
+   rdfs:range miao:MentalIllnessModel ;
+   rdfs:comment "Specifies the mental illness model used in the analysis."@en .
+
+miao:analysed a owl:ObjectProperty ;
+   rdfs:subPropertyOf prov:used ;
+   rdfs:label "analysed"@en ;
+   rdfs:domain miao:AnnotationAnalysis ;
+   rdfs:range miao:AnalysedEntity ;
+   rdfs:comment "This property relates the analysis activity with the resource that is analysed."@en .
+
+miao:usedMLModel a owl:ObjectProperty ;
+   rdfs:subPropertyOf prov:used ;
+   rdfs:label "used machine learning model"@en ;
+   rdfs:domain prov:Activity ;
+   rdfs:range mls:Model ;
+   rdfs:comment "This property relates an activity (such as a MentalIllnessAnalysis) with the Machine Learning Model (mls:Model) used to carry out the activity."@en .
