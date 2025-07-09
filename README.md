@@ -59,10 +59,10 @@ mhc:ICD11 a miao:MentalIllnessModel ;
     rdfs:label "ICD-11 Typology" ;
     miao:hasMentalIllnessCategory mhc:DepressiveDisorder, mhc:AnxietyDisorder .
 
-mhc:DepressiveDisorder a miao:MentalIllnessCategory ;
+mhc:DepressiveDisorder a miao:DisorderType ;
     rdfs:label "Depressive Disorder" .
 
-mhc:AnxietyDisorder a miao:MentalIllnessCategory ;
+mhc:AnxietyDisorder a miao:DisorderType ;
     rdfs:label "Anxiety Disorder" .
 
 # Severity model
@@ -71,17 +71,16 @@ mhc:ICD11Severity a miao:MentalIllnessModel ;
     rdfs:label "ICD-11 Severity Levels" ;
     miao:hasMentalIllnessCategory mhc:Mild, mhc:Severe .
 
-mhc:Mild a miao:MentalIllnessCategory ;
+mhc:Mild a miao:SeverityLevel ;
     rdfs:label "Mild" .
 
-mhc:Severe a miao:MentalIllnessCategory ;
+mhc:Severe a miao:SeverityLevel ;
     rdfs:label "Severe" .
 
 ```
 
 **Description:**  
-Models for disorder typologies and severity levels are defined as separate `MentalIllnessModel` instances, each with their respective categories.
-
+Models for disorder typologies and severity levels are defined as separate `MentalIllnessModel` instances, each with their respective categories. Categories are explicitly typed as `DisorderType` or `SeverityLevel` (subclasses of `MentalIllnessCategory`).
 ---
 
 ### Example 2: Manual Annotation of a Clinical Note (Typology)

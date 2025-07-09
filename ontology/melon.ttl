@@ -48,7 +48,17 @@ miao:MentalIllnessModel a owl:Class ;
 miao:MentalIllnessCategory a owl:Class ;
    rdfs:subClassOf prov:Entity ;
    rdfs:label "Mental Illness Category"@en ;
-   rdfs:comment "Represents a category related to mental illnesses, which may refer either to (a) the type or class of mental illness (e.g., anxiety disorder, depressive disorder) as defined by a particular model or classification system, or (b) the severity or level of a specific condition (e.g., mild, moderate, severe), according to the criteria of the applied model."@en .
+   rdfs:comment "Abstract superclass for categories related to mental illnesses. Use the subclass miao:DisorderType for categories representing types of mental illness (e.g., anxiety disorder, depressive disorder), and miao:SeverityLevel for categories representing severity or grade (e.g., mild, moderate, severe), as defined by a particular model or classification system."@en .
+
+miao:DisorderType a owl:Class ;
+    rdfs:subClassOf miao:MentalIllnessCategory ;
+    rdfs:label "Disorder Type"@en ;
+    rdfs:comment "A category representing a type of mental illness (e.g., depressive disorder, anxiety disorder)."@en .
+
+miao:SeverityLevel a owl:Class ;
+    rdfs:subClassOf miao:MentalIllnessCategory ;
+    rdfs:label "Severity Level"@en ;
+    rdfs:comment "A category representing the severity or grade of a mental illness (e.g., mild, moderate, severe)."@en .
 
 miao:hasMentalIllnessCategory a owl:ObjectProperty ;
    rdfs:subPropertyOf prov:hadMember ;
