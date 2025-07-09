@@ -39,166 +39,6 @@ MIAO revolves around a few core concepts that model the entire analysis pipeline
 ## Example of Use
 
 
-
-## Use Cases
-
-This section illustrates practical scenarios and example data patterns for using the MIAO ontology in mental illness analysis. The examples demonstrate integration with external mental health ontologies and machine learning models, as well as the annotation of both disorder typologies and severity levels.
-
----
-
-### Example 1: Manual Annotation of a Clinical Note
-
-```
-
-@prefix : [http://www.gsi.upm.es/ontologies/miao/examples\#](http://www.gsi.upm.es/ontologies/miao/examples#) .
-@prefix miao: [http://www.gsi.upm.es/ontologies/miao/ns\#](http://www.gsi.upm.es/ontologies/miao/ns#) .
-@prefix oa: [http://www.w3.org/ns/oa\#](http://www.w3.org/ns/oa#) .
-@prefix prov: [http://www.w3.org/ns/prov\#](http://www.w3.org/ns/prov#) .
-@prefix mls: [http://www.w3.org/ns/mls\#](http://www.w3.org/ns/mls#) .
-@prefix itsrdf: [http://www.w3.org/2005/11/its/rdf\#](http://www.w3.org/2005/11/its/rdf#) .
-@prefix mhc: [http://example.org/mentalhealth/classification\#](http://example.org/mentalhealth/classification#) .
-@prefix xsd: [http://www.w3.org/2001/XMLSchema\#](http://www.w3.org/2001/XMLSchema#) .
-
-:note1 a miao:AnalysedEntity, schema:MedicalRecord ;
-schema:articleBody "Patient reports persistent sadness and loss of interest in daily activities." ;
-schema:dateCreated "2025-06-10"^^xsd:date .
-
-:annotator1 a prov:Person ;
-rdfs:label "Dr. Jane Smith" .
-
-:analysis1 a miao:MentalIllnessAnalysis ;
-prov:wasAssociatedWith :annotator1 ;
-miao:analysed :note1 ;
-miao:usedMentalIllnessModel mhc:ICD11 ;
-prov:generated :annotation1 .
-
-:annotation1 a miao:MentalIllnessAnnotation ;
-miao:hasMentalIllnessCategory mhc:DepressiveDisorder, mhc:Severe ;
-miao:hasMentalIllnessIntensity "0.85"^^xsd:float ;
-itsrdf:taConfidence "0.95"^^xsd:decimal ;
-oa:hasTarget :note1 .
-
-```
-
-**Description:**
-A clinician manually annotates a clinical note. The annotation links to categories from an external mental health classification ontology (e.g., ICD-11), specifying both the type ("Depressive Disorder") and severity ("Severe"), with intensity and confidence values.
-
----
-
-### Example 2: Automated Analysis Using a Machine Learning Model
-
-```
-
-@prefix : [http://www.gsi.upm.es/ontologies/miao/examples\#](http://www.gsi.upm.es/ontologies/miao/examples#) .
-@prefix miao: [http://www.gsi.upm.es/ontologies/miao/ns\#](http://www.gsi.upm.es/ontologies/miao/ns#) .
-@prefix oa: [http://www.w3.org/ns/oa\#](http://www.w3.org/ns/oa#) .
-@prefix prov: [http://www.w3.org/ns/prov\#](http://www.w3.org/ns/prov#) .
-@prefix mls: [http://www.w3.org/ns/mls\#](http://www.w3.org/ns/mls#) .
-@prefix itsrdf: [http://www.w3.org/2005/11/its/rdf\#](http://www.w3.org/2005/11/its/rdf#) .
-@prefix mhc: [http://example.org/mentalhealth/classification\#](http://example.org/mentalhealth/classification#) .
-@prefix xsd: [http://www.w3.org/2001/XMLSchema\#](http://www.w3.org/2001/XMLSchema#) .
-
-:tweet1 a miao:AnalysedEntity, schema:SocialMediaPosting ;
-schema:text "I can't sleep and feel anxious all the time." ;
-schema:dateCreated "2025-07-01"^^xsd:date .
-
-:ml_model1 a mls:Model ;
-rdfs:label "Anxiety Detector BERT v2.1" .
-
-:analysis2 a miao:MentalIllnessAnalysis ;
-prov:wasAssociatedWith :ml_agent1 ;
-miao:analysed :tweet1 ;
-miao:usedMentalIllnessModel mhc:DSM5 ;
-miao:usedMLModel :ml_model1 ;
-prov:generated :annotation2 .
-
-:annotation2 a miao:MentalIllnessAnnotation ;
-miao:hasMentalIllnessCategory mhc:AnxietyDisorder, mhc:Moderate ;
-miao:hasMentalIllnessIntensity "0.67"^^xsd:float ;
-itsrdf:taConfidence "0.81"^^xsd:decimal ;
-oa:hasTarget :tweet1 .
-
-```
-
-**Description:**
-A machine learning agent analyzes a social media post, producing an annotation that references both a typology ("Anxiety Disorder") and severity ("Moderate") from an external ontology. The annotation includes intensity and confidence values.
-
----
-
-### Example 3: Integration with an External Mental Health Ontology
-
-```
-
-@prefix : <http://www.gsi.upm.es/ontologies/miao/examples#> .
-@prefix miao: <http://www.gsi.upm.es/ontologies/miao/ns#> .
-@prefix oa: <http://www.w3.org/ns/oa#> .
-@prefix prov: <http://www.w3.org/ns/prov#> .
-@prefix mhc: <http://example.org/mentalhealth/classification#> .
-@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
-
-# External ontology defines disorder types as categories under the ICD-11 model
-mhc:ICD11 a miao:MentalIllnessModel ;
-    rdfs:label "ICD-11" .
-
-mhc:DepressiveDisorder a miao:MentalIllnessCategory ;
-    rdfs:label "Depressive Disorder" ;
-    miao:hasMentalIllnessCategory mhc:ICD11 .
-
-mhc:AnxietyDisorder a miao:MentalIllnessCategory ;
-    rdfs:label "Anxiety Disorder" ;
-    miao:hasMentalIllnessCategory mhc:ICD11 .
-
-```
-
-**Description:**
-This pattern shows how MIAO can be extended or integrated with external ontologies (e.g., ICD-11) by modeling them as `MentalIllnessModel` and `MentalIllnessCategory` instances, allowing for standardized, interoperable annotations.
-
----
-
-### Example 4: Multi-Source Analysis and Aggregation
-
-```
-
-@prefix : <http://www.gsi.upm.es/ontologies/miao/examples#> .
-@prefix miao: <http://www.gsi.upm.es/ontologies/miao/ns#> .
-@prefix oa: <http://www.w3.org/ns/oa#> .
-@prefix prov: <http://www.w3.org/ns/prov#> .
-@prefix mls: <http://www.w3.org/ns/mls#> .
-@prefix itsrdf: <http://www.w3.org/2005/11/its/rdf#> .
-@prefix mhc: <http://example.org/mentalhealth/classification#> .
-@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
-
-:patient1 a prov:Person ;
-    schema:identifier "P12345" .
-
-:questionnaire1 a miao:AnalysedEntity, schema:Questionnaire ;
-    schema:about :patient1 ;
-    schema:dateCreated "2025-07-05"^^xsd:date .
-
-:note2 a miao:AnalysedEntity, schema:MedicalRecord ;
-    schema:about :patient1 ;
-    schema:dateCreated "2025-07-06"^^xsd:date .
-
-:analysis3 a miao:MentalIllnessAnalysis ;
-    prov:wasAssociatedWith :ml_agent2 ;
-    miao:analysed :questionnaire1, :note2 ;
-    miao:usedMentalIllnessModel mhc:ICD11 ;
-    miao:usedMLModel :ml_model2 ;
-    prov:generated :annotation3 .
-
-:annotation3 a miao:MentalIllnessAnnotation ;
-    miao:hasMentalIllnessCategory mhc:DepressiveDisorder ; 
-    miao:hasMentalIllnessIntensity "0.55"^^xsd:float ;      
-    itsrdf:taConfidence "0.88"^^xsd:decimal ;
-    oa:hasTarget :questionnaire1, :note2 .
-
-```
-
-**Description:**
-An analysis aggregates information from multiple sources (questionnaire and clinical note) for a single patient, producing a unified annotation with typology and severity categories.
-
----
-
 ## Use Cases
 
 This section illustrates practical scenarios and example data patterns for using the MIAO ontology in mental illness analysis. The examples demonstrate how to define classification models and categories, integrate with external mental health ontologies, and annotate resources with either disorder typologies or severity levels.
@@ -216,26 +56,26 @@ This section illustrates practical scenarios and example data patterns for using
 # Typology model 
 
 mhc:ICD11 a miao:MentalIllnessModel ;
-rdfs:label "ICD-11 Typology" ;
-miao:hasMentalIllnessCategory mhc:DepressiveDisorder, mhc:AnxietyDisorder .
+    rdfs:label "ICD-11 Typology" ;
+    miao:hasMentalIllnessCategory mhc:DepressiveDisorder, mhc:AnxietyDisorder .
 
 mhc:DepressiveDisorder a miao:MentalIllnessCategory ;
-rdfs:label "Depressive Disorder" .
+    rdfs:label "Depressive Disorder" .
 
 mhc:AnxietyDisorder a miao:MentalIllnessCategory ;
-rdfs:label "Anxiety Disorder" .
+    rdfs:label "Anxiety Disorder" .
 
 # Severity model
 
 mhc:ICD11Severity a miao:MentalIllnessModel ;
-rdfs:label "ICD-11 Severity Levels" ;
-miao:hasMentalIllnessCategory mhc:Mild, mhc:Severe .
+    rdfs:label "ICD-11 Severity Levels" ;
+    miao:hasMentalIllnessCategory mhc:Mild, mhc:Severe .
 
 mhc:Mild a miao:MentalIllnessCategory ;
-rdfs:label "Mild" .
+    rdfs:label "Mild" .
 
 mhc:Severe a miao:MentalIllnessCategory ;
-rdfs:label "Severe" .
+    rdfs:label "Severe" .
 
 ```
 
@@ -257,28 +97,28 @@ Models for disorder typologies and severity levels are defined as separate `Ment
 @prefix xsd: [http://www.w3.org/2001/XMLSchema\#](http://www.w3.org/2001/XMLSchema#) .
 
 :note1 a miao:AnalysedEntity, schema:MedicalRecord ;
-schema:articleBody "Patient reports persistent sadness and loss of interest in daily activities." ;
-schema:dateCreated "2025-06-10"^^xsd:date .
+    schema:articleBody "Patient reports persistent sadness and loss of interest in daily activities." ;
+    schema:dateCreated "2025-06-10"^^xsd:date .
 
 :annotator1 a prov:Person ;
-rdfs:label "Dr. Jane Smith" .
+    rdfs:label "Dr. Jane Smith" .
 
 :analysis1 a miao:MentalIllnessAnalysis ;
-prov:wasAssociatedWith :annotator1 ;
-miao:analysed :note1 ;
-miao:usedMentalIllnessModel mhc:ICD11 ;
-prov:generated :annotation1 .
+    prov:wasAssociatedWith :annotator1 ;
+    miao:analysed :note1 ;
+    miao:usedMentalIllnessModel mhc:ICD11 ;
+    prov:generated :annotation1 .
 
 :annotation1 a miao:MentalIllnessAnnotation ;
-miao:hasMentalIllnessCategory mhc:DepressiveDisorder ;
-miao:hasMentalIllnessIntensity "0.85"^^xsd:float ;
-itsrdf:taConfidence "0.95"^^xsd:decimal ;
-oa:hasTarget :note1 .
+    miao:hasMentalIllnessCategory mhc:DepressiveDisorder ;
+    miao:hasMentalIllnessIntensity "0.85"^^xsd:float ;
+    itsrdf:taConfidence "0.95"^^xsd:decimal ;
+    oa:hasTarget :note1 .
 
 ```
 
 **Description:**  
-A clinician manually annotates a clinical note, assigning a disorder typology from the ICD-11 model. Severity is expressed as a numeric intensity, not as a category.
+A clinician manually annotates a clinical note, assigning a disorder typology from the ICD-11 model.
 
 ---
 
@@ -295,21 +135,21 @@ A clinician manually annotates a clinical note, assigning a disorder typology fr
 @prefix xsd: [http://www.w3.org/2001/XMLSchema\#](http://www.w3.org/2001/XMLSchema#) .
 
 :analysis2 a miao:MentalIllnessAnalysis ;
-prov:wasAssociatedWith :annotator1 ;
-miao:analysed :note1 ;
-miao:usedMentalIllnessModel mhc:ICD11Severity ;
-prov:generated :annotation2 .
+    prov:wasAssociatedWith :annotator1 ;
+    miao:analysed :note1 ;
+    miao:usedMentalIllnessModel mhc:ICD11Severity ;
+    prov:generated :annotation2 .
 
 :annotation2 a miao:MentalIllnessAnnotation ;
-miao:hasMentalIllnessCategory mhc:Severe ;
-miao:hasMentalIllnessIntensity "0.85"^^xsd:float ;
-itsrdf:taConfidence "0.95"^^xsd:decimal ;
-oa:hasTarget :note1 .
+    miao:hasMentalIllnessCategory mhc:Severe ;
+    miao:hasMentalIllnessIntensity "0.85"^^xsd:float ;
+    itsrdf:taConfidence "0.95"^^xsd:decimal ;
+    oa:hasTarget :note1 .
 
 ```
 
 **Description:**  
-A separate annotation records the severity level ("Severe") using a category from the severity model (`ICD11Severity`). This keeps typology and severity on distinct axes, in accordance with the ontology.
+A separate annotation records the severity level ("Severe") using a category from the severity model (`ICD11Severity`). 
 
 ---
 
@@ -328,24 +168,24 @@ A separate annotation records the severity level ("Severe") using a category fro
 @prefix xsd: [http://www.w3.org/2001/XMLSchema\#](http://www.w3.org/2001/XMLSchema#) .
 
 :tweet1 a miao:AnalysedEntity, schema:SocialMediaPosting ;
-schema:text "I can't sleep and feel anxious all the time." ;
-schema:dateCreated "2025-07-01"^^xsd:date .
+    schema:text "I can't sleep and feel anxious all the time." ;
+    schema:dateCreated "2025-07-01"^^xsd:date .
 
 :ml_model1 a mls:Model ;
-rdfs:label "Anxiety Detector BERT v2.1" .
+    rdfs:label "Anxiety Detector BERT v2.1" .
 
 :analysis2 a miao:MentalIllnessAnalysis ;
-prov:wasAssociatedWith :ml_agent1 ;
-miao:analysed :tweet1 ;
-miao:usedMentalIllnessModel mhc:ICD11 ;
-miao:usedMLModel :ml_model1 ;
-prov:generated :annotation3 .
+    prov:wasAssociatedWith :ml_agent1 ;
+    miao:analysed :tweet1 ;
+    miao:usedMentalIllnessModel mhc:ICD11 ;
+    miao:usedMLModel :ml_model1 ;
+    prov:generated :annotation3 .
 
 :annotation3 a miao:MentalIllnessAnnotation ;
-miao:hasMentalIllnessCategory mhc:AnxietyDisorder ;
-miao:hasMentalIllnessIntensity "0.67"^^xsd:float ;
-itsrdf:taConfidence "0.81"^^xsd:decimal ;
-oa:hasTarget :tweet1 .
+    miao:hasMentalIllnessCategory mhc:AnxietyDisorder ;
+    miao:hasMentalIllnessIntensity "0.67"^^xsd:float ;
+    itsrdf:taConfidence "0.81"^^xsd:decimal ;
+    oa:hasTarget :tweet1 .
 
 ```
 
@@ -354,33 +194,33 @@ A machine learning agent analyzes a social media post and assigns a disorder typ
 
 ---
 
-### Example 5: Multi-Source Analysis and Aggregation
+### Example 5: Multi-Source Analysis
 
 ```
 
 :patient1 a prov:Person ;
-schema:identifier "P12345" .
+    schema:identifier "P12345" .
 
 :questionnaire1 a miao:AnalysedEntity, schema:Questionnaire ;
-schema:about :patient1 ;
-schema:dateCreated "2025-07-05"^^xsd:date .
+    schema:about :patient1 ;
+    schema:dateCreated "2025-07-05"^^xsd:date .
 
 :note2 a miao:AnalysedEntity, schema:MedicalRecord ;
-schema:about :patient1 ;
-schema:dateCreated "2025-07-06"^^xsd:date .
+    schema:about :patient1 ;
+    schema:dateCreated "2025-07-06"^^xsd:date .
 
 :analysis3 a miao:MentalIllnessAnalysis ;
-prov:wasAssociatedWith :ml_agent2 ;
-miao:analysed :questionnaire1, :note2 ;
-miao:usedMentalIllnessModel mhc:ICD11 ;
-miao:usedMLModel :ml_model2 ;
-prov:generated :annotation4 .
+    prov:wasAssociatedWith :ml_agent2 ;
+    miao:analysed :questionnaire1, :note2 ;
+    miao:usedMentalIllnessModel mhc:ICD11 ;
+    miao:usedMLModel :ml_model2 ;
+    prov:generated :annotation4 .
 
 :annotation4 a miao:MentalIllnessAnnotation ;
-miao:hasMentalIllnessCategory mhc:DepressiveDisorder ;
-miao:hasMentalIllnessIntensity "0.55"^^xsd:float ;
-itsrdf:taConfidence "0.88"^^xsd:decimal ;
-oa:hasTarget :questionnaire1, :note2 .
+    miao:hasMentalIllnessCategory mhc:DepressiveDisorder ;
+    miao:hasMentalIllnessIntensity "0.55"^^xsd:float ;
+    itsrdf:taConfidence "0.88"^^xsd:decimal ;
+    oa:hasTarget :questionnaire1, :note2 .
 
 ```
 
@@ -389,4 +229,4 @@ An analysis aggregates information from multiple sources (questionnaire and clin
 
 ---
 
-These use cases demonstrate MIAO’s flexibility for representing both manual and automated mental illness annotation, supporting multi-source integration, and enabling interoperability with external mental health classification systems.
+These use cases demonstrate MIAO's flexibility for representing both manual and automated mental illness annotation and supporting multi-source integration.
