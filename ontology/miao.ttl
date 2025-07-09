@@ -16,9 +16,8 @@
    rdfs:label "MIAO Mental Illness Analysis Ontology"@en ;
    owl:versionInfo "1.0.0"^^xsd:string ;
    owl:versionIRI <http://www.gsi.upm.es/ontologies/miao/ns/1.0.0> ;
-   owl:imports <http://www.w3.org/2005/11/its/rdf#> ;
+   owl:imports <http://www.w3.org/2005/11/its/rdf#> , <http://www.w3.org/ns/prov-o#> ;
    dc:title "MIAO Mental Illness Analysis Ontology"@en ;
-   dc:publisher <http://www.gsi.upm.es> ;
    rdfs:comment "MIAO is an ontology designed for representing mental illness analysis and annotations."@en ;
    dc:description "MIAO is an ontology for representing mental illnesses, their characteristics, and annotation of related phenomena."@en ;
    vann:preferredNamespacePrefix "miao" ;

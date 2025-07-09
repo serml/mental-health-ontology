@@ -1,0 +1,143 @@
+@prefix : <http://www.gsi.upm.es/ontologies/miao/examples#> .
+@prefix miao: <http://www.gsi.upm.es/ontologies/miao/ns#> .
+@prefix mhc: <http://example.org/mentalhealth/classification#> .
+@prefix oa: <http://www.w3.org/ns/oa#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix mls: <http://www.w3.org/ns/mls#> .
+@prefix itsrdf: <http://www.w3.org/2005/11/its/rdf#> .
+@prefix nif: <http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#> .
+@prefix schema: <http://schema.org/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+########## MODELS AND CATEGORIES ##########
+
+# Typology model
+mhc:ICD11 a miao:MentalIllnessModel ;
+    rdfs:label "ICD-11 Typology" ;
+    miao:hasMentalIllnessCategory mhc:DepressiveDisorder, mhc:AnxietyDisorder .
+
+mhc:DepressiveDisorder a miao:DisorderType ;
+    rdfs:label "Depressive Disorder" .
+
+mhc:AnxietyDisorder a miao:DisorderType ;
+    rdfs:label "Anxiety Disorder" .
+
+# Severity model
+mhc:ICD11Severity a miao:MentalIllnessModel ;
+    rdfs:label "ICD-11 Severity Levels" ;
+    miao:hasMentalIllnessCategory mhc:Mild, mhc:Severe .
+
+mhc:Mild a miao:SeverityLevel ;
+    rdfs:label "Mild" .
+
+mhc:Severe a miao:SeverityLevel ;
+    rdfs:label "Severe" .
+
+########## EXAMPLE 1: MANUAL ANNOTATION OF A CLINICAL NOTE (TYPOLOGY) ##########
+
+:note1 a miao:AnalysedEntity, schema:MedicalRecord ;
+    schema:articleBody "Patient reports persistent sadness and loss of interest in daily activities." ;
+    schema:dateCreated "2025-06-10"^^xsd:date .
+
+:annotator1 a prov:Person ;
+    rdfs:label "Dr. Jane Smith" .
+
+:analysis1 a miao:MentalIllnessAnalysis ;
+    prov:wasAssociatedWith :annotator1 ;
+    miao:analysed :note1 ;
+    miao:usedMentalIllnessModel mhc:ICD11 ;
+    prov:generated :annotation1 .
+
+:annotation1 a miao:MentalIllnessAnnotation ;
+    miao:hasMentalIllnessCategory mhc:DepressiveDisorder ;
+    miao:hasMentalIllnessIntensity "0.85"^^xsd:float ;
+    itsrdf:taConfidence "0.95"^^xsd:decimal ;
+    oa:hasTarget :note1 .
+
+########## EXAMPLE 2: MANUAL ANNOTATION OF A CLINICAL NOTE (SEVERITY) ##########
+
+:analysis2 a miao:MentalIllnessAnalysis ;
+    prov:wasAssociatedWith :annotator1 ;
+    miao:analysed :note1 ;
+    miao:usedMentalIllnessModel mhc:ICD11Severity ;
+    prov:generated :annotation2 .
+
+:annotation2 a miao:MentalIllnessAnnotation ;
+    miao:hasMentalIllnessCategory mhc:Severe ;
+    miao:hasMentalIllnessIntensity "0.85"^^xsd:float ;
+    itsrdf:taConfidence "0.95"^^xsd:decimal ;
+    oa:hasTarget :note1 .
+
+########## EXAMPLE 3: AUTOMATED ANALYSIS USING A MACHINE LEARNING MODEL ##########
+
+:tweet1 a miao:AnalysedEntity, schema:SocialMediaPosting ;
+    schema:text "I can't sleep and feel anxious all the time." ;
+    schema:dateCreated "2025-07-01"^^xsd:date .
+
+:ml_model1 a mls:Model ;
+    rdfs:label "Anxiety Detector BERT v2.1" .
+
+:analysis3 a miao:MentalIllnessAnalysis ;
+    prov:wasAssociatedWith :ml_agent1 ;
+    miao:analysed :tweet1 ;
+    miao:usedMentalIllnessModel mhc:ICD11 ;
+    miao:usedMLModel :ml_model1 ;
+    prov:generated :annotation3 .
+
+:annotation3 a miao:MentalIllnessAnnotation ;
+    miao:hasMentalIllnessCategory mhc:AnxietyDisorder ;
+    miao:hasMentalIllnessIntensity "0.67"^^xsd:float ;
+    itsrdf:taConfidence "0.81"^^xsd:decimal ;
+    oa:hasTarget :tweet1 .
+
+########## EXAMPLE 4: MULTI-SOURCE ANALYSIS ##########
+
+:patient1 a prov:Person ;
+    schema:identifier "P12345" .
+
+:questionnaire1 a miao:AnalysedEntity, schema:Questionnaire ;
+    schema:about :patient1 ;
+    schema:dateCreated "2025-07-05"^^xsd:date .
+
+:note2 a miao:AnalysedEntity, schema:MedicalRecord ;
+    schema:about :patient1 ;
+    schema:dateCreated "2025-07-06"^^xsd:date .
+
+:analysis4 a miao:MentalIllnessAnalysis ;
+    prov:wasAssociatedWith :ml_agent2 ;
+    miao:analysed :questionnaire1, :note2 ;
+    miao:usedMentalIllnessModel mhc:ICD11 ;
+    miao:usedMLModel :ml_model2 ;
+    prov:generated :annotation4 .
+
+:annotation4 a miao:MentalIllnessAnnotation ;
+    miao:hasMentalIllnessCategory mhc:DepressiveDisorder ;
+    miao:hasMentalIllnessIntensity "0.55"^^xsd:float ;
+    itsrdf:taConfidence "0.88"^^xsd:decimal ;
+    oa:hasTarget :questionnaire1, :note2 .
+
+########## EXAMPLE 5: ANNOTATION OF A TEXT FRAGMENT USING NIF ##########
+
+:context1 a nif:Context ;
+    nif:isString "The patient reports persistent sadness and loss of interest in daily activities. She also mentions difficulty sleeping."@en ;
+    nif:beginIndex "0"^^xsd:nonNegativeInteger ;
+    nif:endIndex "109"^^xsd:nonNegativeInteger .
+
+:fragment1 a nif:RFC5147String ;
+    nif:anchorOf "persistent sadness and loss of interest in daily activities"@en ;
+    nif:beginIndex "15"^^xsd:nonNegativeInteger ;
+    nif:endIndex "68"^^xsd:nonNegativeInteger ;
+    nif:referenceContext :context1 .
+
+:analysis5 a miao:MentalIllnessAnalysis ;
+    prov:wasAssociatedWith :annotator1 ;
+    miao:analysed :fragment1 ;
+    miao:usedMentalIllnessModel mhc:ICD11 ;
+    prov:generated :annotation5 .
+
+:annotation5 a miao:MentalIllnessAnnotation ;
+    miao:hasMentalIllnessCategory mhc:DepressiveDisorder ;
+    miao:hasMentalIllnessIntensity "0.92"^^xsd:float ;
+    itsrdf:taConfidence "0.97"^^xsd:decimal ;
+    oa:hasTarget :fragment1 .
