@@ -23,13 +23,15 @@ MIAO revolves around a few core concepts that model the entire analysis pipeline
 *   `miao:MentalIllnessAnalysis`: An activity that represents the process of analyzing a resource to detect, annotate, or infer mental illnesses or related characteristics. It is a subclass of `prov:Activity`.
 *   `miao:MentalIllnessAnnotation`: Represents an annotation indicating the presence, symptoms, or characteristics of a mental illness. It is a subclass of `oa:Annotation`.
 *   `miao:MentalIllnessModel`*: Represents a conceptual or computational model used to categorize, structure, or assess mental illnesses and related phenomena. This includes clinical classification systems (e.g., DSM-5, ICD-11), computational models for symptom grouping or severity grading, or custom frameworks defining both typologies and levels of mental health conditions.
-*`miao:MentalIllnessCategory`*: Represents a category related to mental illnesses, which may refer either to (a) the type or class of mental illness (e.g., anxiety disorder, depressive disorder) as defined by a particular model or classification system, or (b) the severity or level of a specific condition (e.g., mild, moderate, severe), according to the criteria of the applied model.
+*   `miao:MentalIllnessCategory`: **Abstract superclass** for categories related to mental illnesses.
+    * `miao:DisorderType`: Subclass of `miao:MentalIllnessCategory` for categories representing types of mental illness (e.g., anxiety disorder, depressive disorder).
+    * `miao:SeverityLevel`: Subclass of `miao:MentalIllnessCategory` for categories representing severity or grade (e.g., mild, moderate, severe).
 
 ### Core Properties
 
 *   `miao:analysed`: Links an analysis activity (`miao:MentalIllnessAnalysis`) to the entity being analysed (`miao:AnalysedEntity`).
 *   `miao:usedMentalIllnessModel`: Specifies the `miao:MentalIllnessModel` used in a particular analysis activity.
-*   `miao:hasMentalIllnessCategory`: Links a `miao:MentalIllnessAnnotation` or a `miao:MentalIllnessModel` to a specific `miao:MentalIllnessCategory`.
+*   `miao:hasMentalIllnessCategory`: Links a `miao:MentalIllnessAnnotation` or a `miao:MentalIllnessModel` to a specific `miao:MentalIllnessCategory` (which can be a DisorderType or SeverityLevel).
 *   `miao:hasMentalIllnessIntensity`: A datatype property that quantifies the intensity or severity of a detected mental illness or symptom, associated with a `miao:MentalIllnessAnnotation`.
 *   `miao:usedMLModel`: Links an analysis activity to a machine learning model (`mls:Model`) used to perform it.
 
