@@ -15,7 +15,7 @@ The ontology is built upon well-established vocabularies such as PROV-O for prov
 
 MIAO revolves around a few core concepts that model the entire analysis pipeline, from the source data to the final, categorized annotation.
 
-![MIAO Ontology Overview](diagrams/miao-ontology-overview.png)
+![MIAO Ontology Overview](diagrams/mentalhealth-ontology.png)
 
 ### Core Classes
 
